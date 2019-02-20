@@ -1,0 +1,41 @@
+
+ubuntu darknet 训练自己的数据集：
+环境：ubuntu16.04 已配好anaconda3 python3.6.4，opencv-python，darknet，cuda，cudnn
+	进入darknet文件夹
+	创建文件夹: trainImage, validateImage,trainImageXML and validateImageXML
+
+	放入jpg图片到trainImage,一部分到validateImage，将对应打好的标签放到xml文件夹中
+	Put corresponding xml files to  trainImageXML and validateImageXML
+	
+	编辑trans.py:
+	In line 12, modify "classes" based on actual categories
+	Run creatID py: python creatID.py
+	Run trans.py: python trans.py
+	trainimagePath.txt and validateImagePath.txt will be generated
+	
+	Modify data/voc.name:
+	
+	更改cfg/voc.data:
+	classes= N  ## actual classes
+	train  = your path /darknet/trainImagePath.txt   ## train image path
+	valid  = your path /darknet/validateImagePath.txt  ## validate image
+	names =  your path /darknet/data/voc.names
+	backup = backup
+
+	更改 cfg/yolo3-tiny.cfg:
+	Search 'yolo', there should be 2 yolo layers
+	Before each yolo layer, there is a convolutional layer.
+	Change the "filters" in that 3 convolutional layers: 3*(classes + 5); for example, if have 3 classes, modify filters = 3*(1 + 5) = 18
+	random可以改0，加快训练速度
+
+5. Training data!!
+	
+	Open Makefile, Change GPU and CUDNN number to 1  !!!!# using GPU to train, much faster	
+	Then make in terminal
+	In terminal, key in: 
+	wget https://pjreddie.com/media/files/darknet53.conv.74 
+	Then: 
+	./darknet detector train cfg/voc.data cfg/yolov3-tiny.cfg darknet53.conv.74
+	
+6.检测的时候detect 默认用的是data/coco.name，将其相应改成自己的name类即可
+./darknet detect cfg/yolov3-voc.cfg backup/yolov3-tiny_10000.weights yourOwnImagePath/plate.jpg
