@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 from pylab import mpl
+import mpl_toolkits.axisartist as axisartist
 mpl.rcParams['font.sans-serif'] = ['SimHei']# plt显示汉字
 
 # 读入数据
@@ -52,25 +53,29 @@ print(angleList)
 print(angleDif)
 
 # 绘图
-plt.figure(figsize=(10,10))
-yvals=np.polyval(fitFunction,x)
-plot1=plt.plot(points[0], points[1],'.',label='original values')
-plot2=plt.plot(x, yvals,'r',label='polyfit values')
+fig=plt.figure(figsize=(10,10))# 创建画布
+ax = axisartist.Subplot(fig, 111)
+fig.add_axes(ax)
+ax.axis["bottom"].set_axisline_style("->", size = 1.5)
+ax.axis["left"].set_axisline_style("->", size = 1.5)
+ax.axis["top"].set_visible(False) # 右边和上边框隐藏
+ax.axis["right"].set_visible(False)
+yvals=np.polyval(fitFunction,x)# 拟合曲线函数
+plot1=plt.plot(points[0], points[1],'.',label='original values')# 画真实点
+plot2=plt.plot(x, yvals,'r',label='polyfit values')# 画拟合点
 for i in range(len(angleList)):
-    #plt.text(points[0][space*i]-0.6,points[1][space*i] , '绝对角度', fontsize=10, alpha = 0.9)
-    plt.text(points[0][space*i]+0.1, points[1][space*i], angleList[i], fontsize=10, alpha = 0.9)
+    plt.text(points[0][space*i]+0.1, points[1][space*i], angleList[i], fontsize=10, alpha = 0.9)# 标注出绝对角度
     if i < len(angleList):
         #注意这里yvals是拟合曲线的位置，可替换成points[1]真实数据点位置
         plt.quiver(points[0][space * (i + 1)], yvals[space * (i + 1)], 1, slopes[i], color='black', width=0.002)  # 绘制箭头
     if i<len(angleDif):
-        #plt.text(points[0][space * (i + 1)]-0.4, points[1][space * (i + 1)] - 0.5,  '角度差', fontsize=10, alpha=0.9)
-        plt.text(points[0][space * (i+1)]+0.1, points[1][space * (i+1)]-0.3, angleDif[i], fontsize=10, alpha=0.9)
+        plt.text(points[0][space * (i+1)]+0.1, points[1][space * (i+1)]-0.3, angleDif[i], fontsize=10, alpha=0.9) # 标注相对角度差
 
-
-plt.title("test")
-plt.xlabel("X")
-plt.xlabel("Y")
-plt.xlim(0,10)
+plt.title("drawPic")
+plt.xlabel("pointX")
+plt.ylabel("pointY")
+plt.xlim(0,10)  # 坐标轴范围
 plt.ylim(0,10)
 plt.legend()
+# plt.savefig('drawPic.png', dpi=500)  # 指定分辨率,plt自带的save不够清晰
 plt.show()
